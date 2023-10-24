@@ -9,7 +9,7 @@ from pathlib import Path
 import paramiko
 from scp import SCPClient
 
-from cijoe.core.misc import ENCODING
+from cijoe.core.misc import ENCODING, CijoeLogFormatter
 from cijoe.core.resources import Config
 
 
@@ -141,6 +141,7 @@ class SSH(Transport):
 
             _, stdout, stderr = self.ssh.exec_command(cmd, environment=env)
 
+            log.log(CijoeLogFormatter.TRACE, "$ {}\n{}".format(cmd, stdout.read().decode(ENCODING, errors="replace")))
             logfile.write(stdout.read().decode(ENCODING, errors="replace"))
             logfile.write(stderr.read().decode(ENCODING, errors="replace"))
 

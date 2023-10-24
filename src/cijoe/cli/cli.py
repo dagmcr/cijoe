@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 
 import cijoe.core
+from cijoe.core.misc import CijoeLogFormatter
 from cijoe.core.command import Cijoe, default_output_path
 from cijoe.core.monitor import WorkflowMonitor
 from cijoe.core.resources import (
@@ -463,12 +464,14 @@ def main():
 
     args = parse_args()
 
-    levels = [log.ERROR, log.INFO, log.DEBUG]
+    stream_handler = log.StreamHandler()
+    stream_handler.setFormatter(CijoeLogFormatter())
+    levels = [log.ERROR, CijoeLogFormatter.TRACE, log.INFO, log.DEBUG]
     log.basicConfig(
-        format="%(levelname)s:%(module)s:%(funcName)s(): %(message)s",
         level=levels[
             min(sum(args.log_level), len(levels) - 1) if args.log_level else 0
         ],
+        handlers=[stream_handler],
     )
 
     if args.resources:

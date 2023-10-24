@@ -1,5 +1,6 @@
 import errno
 from pathlib import Path
+import logging as log
 
 import requests
 
@@ -31,3 +32,31 @@ def download(url: str, path: Path):
                 local.write(chunk)
 
     return 0, path
+
+
+class CijoeLogFormatter(log.Formatter):
+    """Logging colored formatter"""
+
+    cyan = '\x1b[36m'
+    green = '\x1b[32m'
+    red = '\x1b[38;5;196m'
+    white = '\x1b[37m'
+    reset = '\x1b[0m'
+
+    format_str = "%(levelname)s:%(module)s:%(funcName)s(): %(message)s"
+    format_trace_str = "%(message)s"
+    TRACE = log.INFO + 1
+
+    def __init__(self):
+        super().__init__()
+        self.FORMATS = {
+            log.DEBUG: self.cyan + self.format_str + self.reset,
+            log.INFO: self.green + self.format_str + self.reset,
+            log.ERROR: self.red + self.format_str + self.reset,
+            self.TRACE: self.white + self.format_trace_str + self.reset
+        }
+
+    def format(self, record):
+        log_fmt = self.FORMATS.get(record.levelno)
+        formatter = log.Formatter(log_fmt)
+        return formatter.format(record)
