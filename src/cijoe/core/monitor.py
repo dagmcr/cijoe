@@ -58,7 +58,7 @@ def worker(monitor):
                 except UnicodeError:
                     pass
                 monitor.dumped_at = time.time()
-                bytes_read[ident] += nbytes
+                bytes_read[ident] += 0
 
         monitor.workq.task_done()
 
